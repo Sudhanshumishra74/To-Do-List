@@ -33,7 +33,7 @@ btn.addEventListener("click", function(){
     
     taskList.appendChild(li);
 taskList.appendChild(del);
-  //li.appendChild(del);
+  
     inputBox.value = "";
 
 })
