@@ -1,39 +1,44 @@
+document.addEventListener("DOMContentLoaded", () => {
+  let inputBox = document.getElementById("inputBox");
+  let btn = document.getElementById("btn");
+  let taskList = document.getElementById("taskList");
 
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-let inputBox = document.getElementById("inputBox");
-let btn = document.getElementById("btn");
-let taskList = document.getElementById("taskList");
+  tasks.forEach(task => renderTask(task));
 
-btn.addEventListener("click", function(){
-    let task = inputBox.value.trim();
+  btn.addEventListener("click", function() {
+    let taskText = inputBox.value.trim();
+    if (taskText === "") return;
 
+    const newTask = {
+      id: Date.now(),
+      task: taskText
+    };
 
-    if(task == "") return;
+    tasks.push(newTask);
+    saveTask();
+    renderTask(newTask);
+    inputBox.value = "";
+  });
+
+  function renderTask(task) {
     let li = document.createElement("li");
-    li.innerText = task;
-    li.style.fontSize = "2rem";
-    li.style.marginTop = "10px";
+    li.innerHTML = task.task;
 
     let del = document.createElement("button");
- del.innerHTML = `<i class="fa-solid fa-trash"></i>`;
- del.style.marginLeft = "300px";
-    del.style.padding = "5px 10px";
-    del.style.fontSize = "1rem";
-    del.style.cursor = "pointer";
-    del.style.borderRadius = "20px";
-    del.style.backgroundColor = "red";
-    del.style.border = "none";
-    del.style.color = "white"
-    del.style.gap = "30px"
+    del.innerHTML = "Task Completed";
+    del.addEventListener("click", function() {
+      tasks = tasks.filter(t => t.id !== task.id);
+      saveTask();
+      taskList.removeChild(li);
+    });
 
-    del.addEventListener("click", function(){
-           taskList.removeChild(li);
-           taskList.removeChild(del);
-    })
-    
+    li.appendChild(del);
     taskList.appendChild(li);
-taskList.appendChild(del);
-  
-    inputBox.value = "";
+  }
 
-})
+  function saveTask() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+});
